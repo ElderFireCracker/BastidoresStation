@@ -1,3 +1,5 @@
+// caveirinha codes mais fodas
+
 // Sinais
 #define COMSIG_TURF_JUMP_ENDED_HERE "turf_jump_ended_here"      //from datum/element/jump/end_jump(): (jumper)
 #define COMSIG_ELEMENT_JUMP_STARTED "element_jump_started"
