@@ -516,6 +516,70 @@
 		QDEL_NULL(alt_clone)
 	return ..()
 
+// NOVA ADDITION START
+
+/datum/status_effect/washing_regen
+	id = "shower_regen"
+	duration = STATUS_EFFECT_PERMANENT
+	status_type = STATUS_EFFECT_UNIQUE
+	alert_type = /atom/movable/screen/alert/status_effect/washing_regen
+	/// How much stamina we regain from washing
+	var/stamina_heal_per_tick = -4
+	/// How much brute, tox and fie damage we heal from this
+	var/heal_per_tick = 0
+	/// The main reagent used for the shower (if no reagent is at least 70% of volume then it's null)
+	var/datum/reagent/shower_reagent
+
+/datum/status_effect/washing_regen/on_creation(mob/living/new_owner, shower_reagent)
+	if(!src.shower_reagent)
+		src.shower_reagent = shower_reagent
+	return ..()
+
+/datum/status_effect/washing_regen/hot_spring
+	alert_type = /atom/movable/screen/alert/status_effect/washing_regen/hotspring
+	stamina_heal_per_tick = -4.5
+	heal_per_tick = -0.4
+	shower_reagent = /datum/reagent/water
+
+/datum/status_effect/washing_regen/hot_spring/on_apply()
+	. = ..()
+	if(HAS_TRAIT(owner, TRAIT_WATER_BREATHING))// && !HAS_TRAIT(owner, TRAIT_WATER_ADAPTATION)) monkeystation specific edit
+		alert_type = /atom/movable/screen/alert/status_effect/washing_regen/hotspring/hater
+
+/datum/status_effect/washing_regen/hot_spring/tick(seconds_between_ticks)
+	. = ..()
+	owner.adjust_bodytemperature(10 * seconds_between_ticks, 0, T0C + 45)
+
+/atom/movable/screen/alert/status_effect/washing_regen/hotspring
+	name = "Hotspring"
+	desc = "Hot Springs are so relaxing..."
+	icon_state = "hotspring_regen"
+
+/atom/movable/screen/alert/status_effect/washing_regen/hotspring/hater
+	name = "Hotspring"
+	desc = "Waaater... FUCK THIS HOT WATER!!"
+	icon_state = "hotspring_regen_catgirl"
+
+
+/datum/status_effect/gutted
+	id = "gutted"
+	alert_type = null
+	duration = STATUS_EFFECT_PERMANENT
+	tick_interval = STATUS_EFFECT_NO_TICK
+
+/datum/status_effect/gutted/on_apply()
+	RegisterSignal(owner, COMSIG_MOB_STATCHANGE, PROC_REF(stop_gutting))
+	return TRUE
+
+/datum/status_effect/gutted/on_remove()
+	UnregisterSignal(owner, COMSIG_MOB_STATCHANGE)
+
+/datum/status_effect/gutted/proc/stop_gutting()
+	SIGNAL_HANDLER
+	qdel(src)
+
+// END OF NOVA ADDITION
+
 #undef EIGENSTASIUM_MAX_BUFFER
 #undef EIGENSTASIUM_STABILISATION_RATE
 #undef EIGENSTASIUM_PHASE_1_END

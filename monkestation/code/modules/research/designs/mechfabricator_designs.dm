@@ -23,6 +23,19 @@
 	)
 	departmental_flags = DEPARTMENT_BITFLAG_MEDICAL
 
+/datum/design/ipc_body
+	name = "IPC Body"
+	desc = "An IPC body made of metal. Now you can create your own IPC. Must be completed with other IPC parts."
+	id = "ipc_body"
+	build_type = MECHFAB
+	construction_time = 15 SECONDS
+	materials = list(/datum/material/iron = 20000, /datum/material/glass = 1000, /datum/material/silver = 200, /datum/material/gold = 400)
+	build_path = /mob/living/carbon/human/species/ipc_empty
+	category = list(
+		RND_CATEGORY_CYBERNETICS + RND_SUBCATEGORY_CYBERNETICS_ORGANS_MISC
+		)
+	departmental_flags = DEPARTMENT_BITFLAG_MEDICAL
+
 /datum/design/ipc_part_chest
 	name = "IPC Replacement Chest"
 	id = "ipc_chest"
@@ -84,7 +97,7 @@
 	departmental_flags = DEPARTMENT_BITFLAG_MEDICAL
 
 /datum/design/power_cord
-	name = "power cord implant"
+	name = "Power Cord Implant"
 	desc = "An internal power cord hooked up to a battery. Useful if you run on volts."
 	id = "power_cord"
 	build_type = MECHFAB
@@ -92,7 +105,7 @@
 	materials = list(/datum/material/iron = 2500, /datum/material/glass = 2000)
 	build_path = /obj/item/organ/internal/cyberimp/arm/item_set/power_cord
 	category = list(
-		RND_CATEGORY_CYBERNETICS + RND_SUBCATEGORY_CYBERNETICS_ORGANS_MISC
+		RND_CATEGORY_CYBERNETICS + RND_SUBCATEGORY_CYBERNETICS_IMPLANTS_MISC
 	)
 	departmental_flags = DEPARTMENT_BITFLAG_MEDICAL
 

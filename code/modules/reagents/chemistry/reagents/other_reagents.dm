@@ -16,6 +16,7 @@
 		"cloneable" = null, // Tracks if the guy who the blood came from suicided or not
 		"factions" = null, // Factions the guy who the blood came from was in
 		"quirks" = null, // Quirk typepaths of the guy who the blood came from had
+		"monkey_origins" = FALSE // Nova Addition hemophage
 		)
 	name = "Blood"
 	color = COLOR_BLOOD
@@ -55,8 +56,14 @@
 		if(data["blood_type"] in blood.compatible_types)
 			exposed_mob.blood_volume = min(exposed_mob.blood_volume + round(reac_volume, 0.1), BLOOD_VOLUME_MAXIMUM)
 		else
+			// Nova edit start
+			/* // original
 			exposed_mob.reagents.add_reagent(/datum/reagent/toxin, reac_volume * 0.5)
-
+			*/
+         	// We do a max() here so that being injected with monkey blood when you're past 560u doesn't reset you back to 560
+			var/max_blood_volume = data["monkey_origins"] ? max(exposed_mob.blood_volume, BLOOD_VOLUME_NORMAL) : BLOOD_VOLUME_MAXIMUM
+			exposed_mob.blood_volume = min(exposed_mob.blood_volume + round(reac_volume, 0.1), max_blood_volume)
+			// nova edit end
 		exposed_mob.reagents.remove_reagent(type, reac_volume) // Because we don't want blood to just lie around in the patient's blood, makes no sense.
 
 
@@ -251,6 +258,8 @@
 /**
  * Water reaction to a mob
  */
+#define WAS_SPRAYED "was_sprayed" //monkestation edit
+
 /datum/reagent/water/expose_mob(mob/living/exposed_mob, methods = TOUCH, reac_volume)//Splashing people with water can help put them out!
 	. = ..()
 	if(methods & TOUCH)
@@ -263,6 +272,28 @@
 		exposed_mob.incapacitate(1) // startles the felinid, canceling any do_after
 		exposed_mob.add_mood_event("watersprayed", /datum/mood_event/watersprayed)
 
+	//MONKESTATION EDIT START
+	if(!is_cat_enough(exposed_mob, include_all_anime = TRUE))
+		return
+
+	var/mob/living/victim = exposed_mob
+	if((methods & (TOUCH|VAPOR)) && !victim.is_pepper_proof() && !HAS_TRAIT(victim, TRAIT_FEARLESS))
+		victim.set_eye_blur_if_lower(3 SECONDS)
+		victim.set_confusion_if_lower(5 SECONDS)
+		if(ishuman(victim))
+			victim.add_mood_event("watersprayed", /datum/mood_event/watersprayed/cat)
+		victim.update_damage_hud()
+		if(HAS_TRAIT(victim, WAS_SPRAYED))
+			return
+		ADD_TRAIT(victim, WAS_SPRAYED, TRAIT_GENERIC)
+		if(prob(50))
+			INVOKE_ASYNC(victim, TYPE_PROC_REF(/mob, emote), "hiss")
+		else
+			INVOKE_ASYNC(victim, TYPE_PROC_REF(/mob, emote), "scream")
+		addtimer(TRAIT_CALLBACK_REMOVE(victim, WAS_SPRAYED, TRAIT_GENERIC), 1 SECONDS)
+	//MONKESTATION EDIT STOP
+
+#undef WAS_SPRAYED //monkestation edit
 
 #undef WATER_TO_WET_STACKS_FACTOR_TOUCH
 #undef WATER_TO_WET_STACKS_FACTOR_VAPOR
@@ -1755,7 +1786,7 @@
 	name = "Stable Plasma"
 	description = "Non-flammable plasma locked into a liquid form that cannot ignite or become gaseous/solid."
 	reagent_state = LIQUID
-	color = "#2D2D2D"
+	color = "#8228a0c6" //monkestation edit
 	taste_description = "bitterness"
 	taste_mult = 1.5
 	ph = 1.5
