@@ -14,6 +14,10 @@
 /datum/action/cooldown/diegosmasher/skyfall
     name = "Skyfall"
     var/charge_time = 3 SECONDS
+    var/static/list/impact_sounds = list(
+        'sound/effects/explosion1.ogg',
+        'sound/effects/explosion2.ogg'
+    )
 
 /datum/action/cooldown/diegosmasher/skyfall/Trigger(trigger_flags)
     if(!IsAvailable() || !owner)
@@ -30,15 +34,12 @@
         span_notice("Você inicia a preparação para o Skyfall!")
     )
 
-    // Fase de preparação
-    playsound(user, 'sound/effects/gravhit.ogg', 50, TRUE)
-    user.Shake(3, 3, charge_time)
-
     if(!do_after(user, charge_time, user, timed_action_flags = IGNORE_USER_LOC_CHANGE))
         abort()
-        return
+        return FALSE
 
     execute_jump(user)
+    return TRUE
 
 /datum/action/cooldown/diegosmasher/skyfall/proc/execute_jump(mob/living/user)
     // Efeitos iniciais
@@ -49,17 +50,19 @@
     user.resistance_flags |= INDESTRUCTIBLE
     user.density = FALSE
     user.pass_flags |= PASSTABLE
-    SET_PLANE(user, GAME_PLANE_UPPER_FOV_HIDDEN, user.loc)
+    user.plane = GAME_PLANE_UPPER_FOV_HIDDEN
 
     // Animação de subida
-    animate(
-        user,
+    animate(user,
         time = 1.5 SECONDS,
-        easing = QUAD_EASING|EASE_IN,
         pixel_z = 400,
         alpha = 50,
+        easing = QUAD_EASING|EASE_IN,
         flags = ANIMATION_PARALLEL
     )
+
+    new /obj/effect/hotspot(get_turf(user))
+    new /obj/effect/skyfall_landingzone(get_turf(user), user)
 
     addtimer(CALLBACK(src, PROC_REF(land), user), 1.5 SECONDS)
     StartCooldown()
@@ -71,46 +74,70 @@
     var/turf/landing_spot = get_turf(user)
 
     // Resetar estado
-    animate(user, alpha = 255, time = 8, easing = QUAD_EASING|EASE_IN, flags = ANIMATION_PARALLEL)
-    animate(user, pixel_z = 0, time = 0.5 SECONDS, easing = QUAD_EASING|EASE_IN, flags = ANIMATION_PARALLEL)
+    animate(user,
+        time = 0.5 SECONDS,
+        pixel_z = 0,
+        alpha = 255,
+        easing = BOUNCE_EASING|EASE_OUT,
+        flags = ANIMATION_PARALLEL
+    )
+
     user.resistance_flags &= ~INDESTRUCTIBLE
     user.density = initial(user.density)
     user.pass_flags &= ~PASSTABLE
+    user.plane = initial(user.plane)
 
+    apply_impact_effects(landing_spot)
+
+/datum/action/cooldown/diegosmasher/skyfall/proc/apply_impact_effects(turf/landing_spot)
     // Efeitos de impacto
-    playsound(landing_spot, 'sound/effects/explosion1.ogg', 100, TRUE)
+    playsound(landing_spot, pick(impact_sounds), 100, TRUE)
     new /obj/effect/temp_visual/impact_effect(landing_spot)
 
-    // Dano no ambiente
-    for(var/turf/open/floor in spiral_range_turfs(5, landing_spot))
-        if(prob(50))
+    // Dano ambiental
+    for(var/turf/open/floor in spiral_range_turfs(3, landing_spot)) // Alcance reduzido
+        if(prob(70))
             floor.break_tile()
 
     // Dano em mobs
-    for(var/mob/living/victim in range(5, landing_spot))
-        if(victim == user)
+    for(var/mob/living/victim in view(3, landing_spot))
+        if(victim == owner)
             continue
 
-        victim.apply_damage(150, BRUTE, spread_damage = TRUE)
-        victim.Knockdown(2 SECONDS)
-        shake_camera(victim, 5, 5)
+        victim.apply_damage(80, BRUTE) // Dano balanceado
+        victim.Knockdown(1 SECONDS)
+        shake_camera(victim, 3, 2)
 
         if(victim.stat == CONSCIOUS)
-            victim.visible_message(
-                span_danger("[victim] é lançado longe pelo impacto!"),
-                span_userdanger("O impacto me lança para longe!")
-            )
-            var/throw_dir = get_dir(user, victim)
-            victim.throw_at(get_edge_target_turf(victim, throw_dir), 5, 3)
-        else if(victim.stat != CONSCIOUS)
-            victim.investigate_log("foi desintegrado pelo Skyfall de [user]", INVESTIGATE_DEATHS)
-            victim.gib(FALSE, FALSE, FALSE)
-
-        victim.adjustBruteLoss(80)
+            var/throw_dir = get_dir(landing_spot, victim)
+            victim.throw_at(get_edge_target_turf(victim, throw_dir), 3, 2)
+        else if(victim.stat == DEAD)
+            victim.gib()
 
 /datum/action/cooldown/diegosmasher/skyfall/proc/abort()
+    if(!owner)
+        return
+
     owner.visible_message(
         span_warning("A preparação de [owner] é interrompida!"),
         span_danger("Preparação abortada!")
     )
     StartCooldown()
+
+/obj/effect/skyfall_landingzone/smasher
+    var/mob/living/carbon/human/linked_user
+    var/static/list/animation_easing = list(CIRCULAR_EASING, BOUNCE_EASING)
+
+/obj/effect/skyfall_landingzone/smasher/Initialize(mapload, mob/living/carbon/human/user)
+    . = ..()
+    if(!user)
+        return INITIALIZE_HINT_QDEL
+
+    linked_user = user
+    animate(src,
+        alpha = 255,
+        time = 1 SECONDS,
+        easing = pick(animation_easing),
+        flags = EASE_OUT
+    )
+    QDEL_IN(src, 1 SECONDS)
