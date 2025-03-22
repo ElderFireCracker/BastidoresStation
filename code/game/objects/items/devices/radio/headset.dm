@@ -14,6 +14,8 @@ GLOBAL_LIST_INIT(channel_tokens, list(
 	RADIO_CHANNEL_AI_PRIVATE = RADIO_TOKEN_AI_PRIVATE,
 	RADIO_CHANNEL_ENTERTAINMENT = RADIO_TOKEN_ENTERTAINMENT,
 	RADIO_CHANNEL_RADIO = RADIO_KEY_RADIO,
+	RADIO_CHANNEL_INTERDYNE = RADIO_TOKEN_INTERDYNE,
+	RADIO_CHANNEL_CYBERSUN = RADIO_TOKEN_CYBERSUN,
 ))
 
 /obj/item/radio/headset
@@ -374,6 +376,11 @@ GLOBAL_LIST_INIT(channel_tokens, list(
 	desc = "A headset used by the lower ranking members of Central Command."
 	keyslot = /obj/item/encryptionkey/headset_com
 	keyslot2 = null
+
+/obj/item/radio/headset/headset_cent/representative/Initialize(mapload)
+	. = ..()
+	keyslot2 = new /obj/item/encryptionkey/headset_cent/crew(src)
+	src.recalculateChannels()
 //monkestation addition end
 
 /obj/item/radio/headset/headset_cent/alt/Initialize(mapload)

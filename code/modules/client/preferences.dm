@@ -4,6 +4,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/client/parent
 	/// The key of the parent client.
 	var/parent_key
+	/// The ckey of the parent client.
+	var/parent_ckey
 	/// The path to the general savefile for this datum
 	var/path
 	/// Whether or not we allow saving/loading. Used for guests, if they're enabled
@@ -101,13 +103,14 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 /datum/preferences/New(client/parent)
 	src.parent = parent
 	src.parent_key = parent?.key
+	src.parent_ckey = parent?.ckey
 
 	for (var/middleware_type in subtypesof(/datum/preference_middleware))
 		middleware += new middleware_type(src)
 
 	if(IS_CLIENT_OR_MOCK(parent))
 		load_and_save = !is_guest_key(parent_key)
-		load_path(ckey(parent_key))
+		load_path(parent_ckey)
 		if(load_and_save && !fexists(path))
 			try_savefile_type_migration()
 		unlock_content = !!parent.IsByondMember()
@@ -156,13 +159,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 		ui = new(user, src, "PreferencesMenu")
 		ui.set_autoupdate(FALSE)
 		ui.open()
-
-		// HACK: Without this the character starts out really tiny because of some BYOND bug.
-		// You can fix it by changing a preference, so let's just forcably update the body to emulate this.
-		// Lemon from the future: this issue appears to replicate if the byond map (what we're relaying here)
-		// Is shown while the client's mouse is on the screen. As soon as their mouse enters the main map, it's properly scaled
-		// I hate this place
-		addtimer(CALLBACK(character_preview_view, TYPE_PROC_REF(/atom/movable/screen/map_view/char_preview, update_body)), 1 SECONDS)
 
 /datum/preferences/ui_state(mob/user)
 	return GLOB.always_state
@@ -221,13 +217,10 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 		return
 
 	switch (action)
+		// monkestation start: please get rid of this asap
 		if ("update_body")
-			// monkestation start: janky bugfixing for runtimes
-			if(!QDELETED(character_preview_view))
-				character_preview_view.update_body()
-			else
-				addtimer(CALLBACK(src, PROC_REF(create_character_preview_view), usr), 0.5 SECONDS, TIMER_DELETE_ME)
-			// monkestation end
+			character_preview_view?.update_body()
+		// monkestation end
 		if ("change_slot")
 			// Save existing character
 			save_character()
@@ -241,12 +234,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			for (var/datum/preference_middleware/preference_middleware as anything in middleware)
 				preference_middleware.on_new_character(usr)
 
-			// monkestation start: janky bugfixing for runtimes
-			if(!QDELETED(character_preview_view))
-				character_preview_view.update_body()
-			else
-				addtimer(CALLBACK(src, PROC_REF(create_character_preview_view), usr), 0.5 SECONDS, TIMER_DELETE_ME)
-			// monkestation end
+			character_preview_view?.update_body()
 
 			return TRUE
 		if ("rotate")
@@ -540,3 +528,15 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			default_randomization[preference_key] = RANDOM_ENABLED
 
 	return default_randomization
+
+/// This proc saves the damage currently on `character` (human) and reapplies it after `safe_transfer_prefs()` is applied to the `character`.
+/datum/preferences/proc/safe_transfer_prefs_to_with_damage(mob/living/carbon/human/character, icon_updates = TRUE, is_antag = FALSE, visuals_only = FALSE)
+	if(!istype(character))
+		return FALSE
+
+	var/datum/component/damage_tracker/human/added_tracker = character.AddComponent(/datum/component/damage_tracker/human)
+	if(!added_tracker)
+		return FALSE
+
+	safe_transfer_prefs_to(character, icon_updates, is_antag, visuals_only)
+	qdel(added_tracker)

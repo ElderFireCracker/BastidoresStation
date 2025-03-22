@@ -20,6 +20,8 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	RADIO_KEY_SYNDICATE = RADIO_CHANNEL_SYNDICATE,
 	RADIO_KEY_UPLINK = RADIO_CHANNEL_UPLINK,
 	RADIO_KEY_CENTCOM = RADIO_CHANNEL_CENTCOM,
+	RADIO_KEY_CYBERSUN = RADIO_CHANNEL_CYBERSUN,
+	RADIO_KEY_INTERDYNE = RADIO_CHANNEL_INTERDYNE,
 
 	// Admin
 	MODE_KEY_ADMIN = MODE_ADMIN,
@@ -270,7 +272,7 @@ GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 	if(succumbed)
 		succumb(TRUE)
 		to_chat(src, compose_message(src, language, message, , spans, message_mods))
-	talkcount++
+
 	return TRUE
 
 /mob/living/Hear(message, atom/movable/speaker, datum/language/message_language, raw_message, radio_freq, list/spans, list/message_mods = list(), message_range=0)
