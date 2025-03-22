@@ -65,7 +65,7 @@
 	icon_state = "seva"
 	armor_type = /datum/armor/seva
 	actions_types = list(/datum/action/item_action/seva_voice)
-
+	resistance_flags = ACID_PROOF | FIRE_PROOF
 	var/static/list/sound_options = list(
 		"UUURAAAAHH!!" = 'teatroespacial13/modules/teatro-loadout/sound/seva/warcry.ogg',
 		"Pei pei pei!!" = 'teatroespacial13/modules/teatro-loadout/sound/seva/beng.ogg',

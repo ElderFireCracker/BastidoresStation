@@ -8821,4 +8821,6 @@
 #include "teatroespacial13\modules\SAD\self_actualization_device.dm"
 #include "teatroespacial13\modules\teatro-loadout\code\teatro_clothing.dm"
 #include "teatroespacial13\modules\technodes\medbay_nodes.dm"
+#include "teatroespacial13\modules\uplink\diegoesmagador\diegosmasher_bundle.dm"
+#include "teatroespacial13\modules\uplink\salvedaquebradakit\uplink_items.dm"
 // END_INCLUDE
