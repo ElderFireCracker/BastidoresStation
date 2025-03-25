@@ -4723,7 +4723,7 @@
 	},
 /obj/machinery/power/apc/auto_name/directional/east,
 /obj/structure/cable,
-/obj/machinery/computer/cloning{
+/obj/machinery/computer/scan_consolenew{
 	dir = 8
 	},
 /turf/open/floor/iron/white,
@@ -42775,6 +42775,20 @@
 "nLE" = (
 /turf/open/space,
 /area/space)
+"nLI" = (
+/obj/effect/turf_decal/stripes/line{
+	dir = 1
+	},
+/obj/effect/turf_decal/stripes/line,
+/obj/machinery/door/airlock/external{
+	name = "Docking Bay 2"
+	},
+/obj/effect/mapping_helpers/airlock/cyclelink_helper{
+	dir = 1
+	},
+/obj/structure/fans/tiny,
+/turf/open/floor/iron/dark/textured_large,
+/area/station/hallway/secondary/entry)
 "nLK" = (
 /obj/effect/turf_decal/stripes/line{
 	dir = 10
@@ -58510,7 +58524,27 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 1
 	},
-/obj/machinery/clonepod,
+/obj/structure/table/reinforced/rglass,
+/obj/item/storage/pill_bottle/mannitol{
+	pixel_x = 8;
+	pixel_y = 4
+	},
+/obj/item/storage/pill_bottle/mutadone{
+	pixel_x = 8;
+	pixel_y = 12
+	},
+/obj/item/paper_bin{
+	pixel_x = -4;
+	pixel_y = 4
+	},
+/obj/item/folder/white{
+	pixel_x = -4;
+	pixel_y = 6
+	},
+/obj/item/pen{
+	pixel_x = -4;
+	pixel_y = 7
+	},
 /turf/open/floor/iron/white,
 /area/station/science/genetics/cloning)
 "sXe" = (
@@ -64388,6 +64422,18 @@
 /obj/machinery/duct,
 /turf/open/floor/plating,
 /area/station/maintenance/port/fore)
+"uPJ" = (
+/obj/effect/turf_decal/stripes/line{
+	dir = 1
+	},
+/obj/effect/turf_decal/stripes/line,
+/obj/machinery/door/airlock/external{
+	name = "Docking Bay 2"
+	},
+/obj/effect/mapping_helpers/airlock/cyclelink_helper,
+/obj/structure/fans/tiny,
+/turf/open/floor/iron/dark/textured_large,
+/area/station/hallway/secondary/entry)
 "uPZ" = (
 /obj/effect/decal/cleanable/dirt,
 /obj/structure/chair/wood{
@@ -81745,7 +81791,7 @@ dNu
 mQR
 qvz
 vkg
-nwe
+nLI
 ksa
 ksa
 ksa
@@ -81753,7 +81799,7 @@ ksa
 ksa
 ksa
 ksa
-qvz
+uPJ
 vkg
 nwe
 aHU
@@ -83544,7 +83590,7 @@ tUH
 mQR
 qvz
 ins
-nwe
+nLI
 ksa
 ksa
 ksa
@@ -83552,7 +83598,7 @@ ksa
 ksa
 ksa
 ksa
-qvz
+uPJ
 ins
 bLR
 aHU

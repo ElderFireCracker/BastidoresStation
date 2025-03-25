@@ -26315,9 +26315,7 @@
 /turf/open/floor/iron/textured,
 /area/station/security/brig)
 "itj" = (
-/obj/structure/closet/secure_closet/personal/patient{
-	name = "test subject's closet"
-	},
+/obj/item/kirbyplants/random,
 /turf/open/floor/iron/white,
 /area/station/science/genetics)
 "itl" = (
@@ -30569,6 +30567,7 @@
 	name = "Port Docking Bay 1";
 	space_dir = 2
 	},
+/obj/structure/fans/tiny,
 /turf/open/floor/plating,
 /area/station/hallway/secondary/entry)
 "jMY" = (
@@ -36355,6 +36354,7 @@
 	name = "Port Docking Bay 1";
 	space_dir = 1
 	},
+/obj/structure/fans/tiny,
 /turf/open/floor/plating,
 /area/station/hallway/secondary/entry)
 "lAG" = (
@@ -41350,7 +41350,7 @@
 "nhU" = (
 /obj/machinery/light/directional/north,
 /obj/machinery/status_display/evac/directional/north,
-/obj/machinery/computer/cloning,
+/obj/machinery/computer/scan_consolenew,
 /turf/open/floor/iron/dark,
 /area/station/science/genetics)
 "nia" = (
@@ -45728,7 +45728,9 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 4
 	},
-/obj/machinery/clonepod,
+/obj/structure/closet/secure_closet/personal/patient{
+	name = "test subject's closet"
+	},
 /turf/open/floor/iron/white,
 /area/station/science/genetics)
 "ouZ" = (
@@ -57443,6 +57445,7 @@
 	space_dir = 1
 	},
 /obj/effect/mapping_helpers/airlock/cyclelink_helper,
+/obj/structure/fans/tiny,
 /turf/open/floor/plating,
 /area/station/hallway/secondary/entry)
 "skj" = (

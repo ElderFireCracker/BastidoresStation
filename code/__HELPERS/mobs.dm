@@ -141,7 +141,12 @@
 	if(!length(GLOB.avian_ears_list))
 		init_sprite_accessory_subtypes(/datum/sprite_accessory/plumage, GLOB.avian_ears_list)
 //Monkestation Addition End
-
+	if(!length(GLOB.xeno_tail_list))
+		init_sprite_accessory_subtypes(/datum/sprite_accessory/tails/tail_xeno, GLOB.xeno_tail_list)
+	if(!length(GLOB.xeno_heads_list))
+		init_sprite_accessory_subtypes(/datum/sprite_accessory/xenohead, GLOB.xeno_heads_list)
+	if(!length(GLOB.xeno_dorsals_list))
+		init_sprite_accessory_subtypes(/datum/sprite_accessory/xenodorsal, GLOB.xeno_dorsals_list)
 	//For now we will always return none for tail_human and ears. | "For now" he says.
 	return(list(
 		"tail_cat" = "None",
@@ -182,6 +187,9 @@
 		"arm_wings" = pick(GLOB.arm_wings_list),
 		"ears_avian" = pick(GLOB.avian_ears_list),
 		"tail_avian" = pick(GLOB.tails_list_avian),
+		"xenohybrid_tail" = pick(GLOB.xeno_tail_list),
+		"xenohead" = pick(GLOB.xeno_heads_list),
+		"xenodorsal" = pick(GLOB.xeno_dorsals_list)
 	))
 
 /proc/random_hairstyle(gender)
@@ -261,6 +269,21 @@ GLOBAL_LIST_INIT(skin_tones, sort_list(list(
 	"african1",
 	"african2"
 	)))
+
+GLOBAL_LIST_INIT(skin_tones_colors, list(
+		"#fff4e6",
+		"#ffe0d1",
+		"#fcccb3",
+		"#e8b59b",
+		"#d9ae96",
+		"#c79b8b",
+		"#ffdeb3",
+		"#e3ba84",
+		"#c4915e",
+		"#b87840",
+		"#754523",
+		"#471c18",
+		))
 
 GLOBAL_LIST_INIT(skin_tone_names, list(
 	"african1" = "Medium brown",
